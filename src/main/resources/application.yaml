@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: Blockchan
+
+# Ethereum
+ethereum:
+  network:
+    mainnet: https://mainnet.infura.io/v3/3e07162c0f814ef9988f282c82988898
+    goerli: https://goerli.infura.io/v3/3e07162c0f814ef9988f282c82988898
+
+# Solana
+solana:
+  rpc:
+    mainnet: https://api.mainnet-beta.solana.com
+    devnet: https://api.devnet.solana.com
+
+logging:
+  level:
+    root: INFO                 # Уровень логирования для всего приложения
+    com.blockchain: DEBUG     # Уровень логирования для вашего пакета
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/blockchain.log  # Путь к файлу логов
