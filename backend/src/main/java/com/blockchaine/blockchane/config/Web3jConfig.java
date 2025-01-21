@@ -30,5 +30,4 @@ public class Web3jConfig {
         }
         return web3j;
     }
-
 }

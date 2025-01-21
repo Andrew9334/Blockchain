@@ -1,6 +1,7 @@
 package com.blockchaine.blockchane.service;
 
-import com.blockchaine.blockchane.dto.TokenBalance;
+import com.blockchaine.blockchane.dto.TokenBalanceEth;
+import com.blockchaine.blockchane.dto.TokenBalanceSolana;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,11 +20,8 @@ import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Address;
 
 
-
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,6 +76,35 @@ public class EthereumService {
         } catch (Exception e) {
             logger.error("Ошибка получения транзакций для кошелька {}: {}", walletAddress, e.getMessage(), e);
             return List.of();
+        }
+    }
+
+    public TokenBalanceEth getTokenBalance(String walletAddress, String tokenContractAddress) {
+        try {
+            Function function = new Function(
+                    "balanceOf",
+                    List.of(new Address(walletAddress)),
+                    List.of(new org.web3j.abi.TypeReference<Uint>() {})
+            );
+
+            String encodedFunction = FunctionEncoder.encode(function);
+
+            org.web3j.protocol.core.methods.response.EthCall response = web3j.ethCall(
+                    org.web3j.protocol.core.methods.request.Transaction.createEthCallTransaction(
+                            walletAddress, tokenContractAddress, encodedFunction
+                    ),
+                    DefaultBlockParameterName.LATEST
+            ).send();
+
+            List<Type> decoded = FunctionReturnDecoder.decode(response.getValue(), function.getOutputParameters());
+            BigInteger balance = (decoded != null && !decoded.isEmpty()) ? (BigInteger) decoded.get(0).getValue() : BigInteger.ZERO;
+
+            logger.info("Баланс токена {} для {}: {}", tokenContractAddress, walletAddress, balance);
+
+            return new TokenBalanceEth(walletAddress, tokenContractAddress, Convert.fromWei(balance.toString(), Convert.Unit.ETHER));
+        } catch (Exception e) {
+            logger.error("Ошибка получения баланса токена {} для {}: {}", tokenContractAddress, walletAddress, e.getMessage(), e);
+            return new TokenBalanceEth(walletAddress, tokenContractAddress, BigDecimal.ZERO);
         }
     }
 }

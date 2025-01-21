@@ -1,6 +1,6 @@
 package com.blockchaine.blockchane.service;
 
-import com.blockchaine.blockchane.dto.TokenBalance;
+import com.blockchaine.blockchane.dto.TokenBalanceSolana;
 import com.blockchaine.blockchane.dto.TransactionDetail;
 import org.p2p.solanaj.core.PublicKey;
 import org.p2p.solanaj.rpc.RpcClient;
@@ -26,6 +26,9 @@ public class SolanaService {
     }
 
     public long getBalance(String walletAddress) {
+        if (walletAddress == null || walletAddress.length() < 32) {
+            throw new IllegalArgumentException("Invalid wallet address");
+        }
         try {
             PublicKey publicKey = new PublicKey(walletAddress);
             return rpcClient.getApi().getBalance(publicKey);
@@ -35,7 +38,7 @@ public class SolanaService {
         }
     }
 
-    public TokenBalance getTokenBalance(String walletAddress, String tokenMint) {
+    public TokenBalanceSolana getTokenBalance(String walletAddress, String tokenMint) {
         try {
             PublicKey ownerPublicKey = new PublicKey(walletAddress);
             PublicKey tokenMintKey = new PublicKey(tokenMint);
@@ -43,10 +46,10 @@ public class SolanaService {
 
             if (tokenAccount == null) {
                 logger.warn("Токен-аккаунт для mint {} не найден у владельца {}", tokenMint, walletAddress);
-                return new TokenBalance(null, 0);
+                return new TokenBalanceSolana(null, 0);
             }
             double balance = rpcClient.getApi().getTokenAccountBalance(tokenAccount).getUiAmount();
-            return new TokenBalance(tokenAccount.toBase58(), balance);
+            return new TokenBalanceSolana(tokenAccount.toBase58(), balance);
         } catch (RpcException e) {
             logger.error("Ошибка получения токен-аккаунта для владельца {} и mint {}: {}", walletAddress, tokenMint, e.getMessage(), e);
             throw new RuntimeException("Ошибка получения токен-аккаунта", e);

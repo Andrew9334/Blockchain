@@ -2,6 +2,12 @@ spring:
   application:
     name: Blockchan
 
+    spring:
+      autoconfigure:
+        exclude:
+          - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+
+
 # Ethereum
 ethereum:
   network:
