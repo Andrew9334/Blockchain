@@ -1,30 +1,21 @@
 spring:
   application:
-    name: Blockchan
+    name: Blockchain
 
-    spring:
-      autoconfigure:
-        exclude:
-          - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 
-
-# Ethereum
-ethereum:
-  network:
-    mainnet: https://mainnet.infura.io/v3/3e07162c0f814ef9988f282c82988898
-    goerli: https://goerli.infura.io/v3/3e07162c0f814ef9988f282c82988898
-
-# Solana
-solana:
-  rpc:
-    mainnet: https://api.mainnet-beta.solana.com
-    devnet: https://api.devnet.solana.com
+arkham:
+  provider: customProvider
+  apiKey: "YOUR_API_KEY"  # Если требуется ключ доступа
+  baseUrl: "https://intel.arkm.com/explorer/address/"
 
 logging:
   level:
-    root: INFO                 # Уровень логирования для всего приложения
-    com.blockchain: DEBUG     # Уровень логирования для вашего пакета
+    root: INFO                 # Общий уровень логирования
+    com.blockchain: DEBUG      # Логирование для вашего пакета
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
   file:
-    name: logs/blockchain.log  # Путь к файлу логов
+    name: logs/blockchain.log  # Логи пишутся в этот файл
