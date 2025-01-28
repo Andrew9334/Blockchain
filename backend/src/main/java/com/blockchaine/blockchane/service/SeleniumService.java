@@ -1,6 +1,8 @@
 package com.blockchaine.blockchane.service;
 
 import com.blockchaine.blockchane.config.ArkhamConfig;
+import com.blockchaine.blockchane.dto.RawWalletData;
+import com.blockchaine.blockchane.dto.Transaction;
 import com.blockchaine.blockchane.dto.WalletData;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.By;
@@ -28,7 +30,7 @@ public class SeleniumService {
     }
 
     public WalletData parseWalletData(String walletAddress) {
-        WebDriverManager.chromedriver().setup(); // Автоматическая настройка драйвера
+        WebDriverManager.chromedriver().setup();
         WebDriver driver = new ChromeDriver();
         WalletData walletData = null;
 
@@ -42,23 +44,58 @@ public class SeleniumService {
                     By.cssSelector("span.Header_portfolioValue__AemOW")
             ));
             String balance = balanceElement.getText();
-            System.out.println("Баланс: " + balance);
 
             WebElement transactionHistoryElement = wait.until(ExpectedConditions.visibilityOfElementLocated(
                     By.cssSelector("div.Transactions_transactionsGrid__kegW5")
             ));
+            wait.until(ExpectedConditions.numberOfElementsToBeMoreThan(By.cssSelector("div.Transactions_transactionsGrid__kegW5 div"), 0));
             List<WebElement> transactionElements = transactionHistoryElement.findElements(By.cssSelector("div"));
-            List<String> transactions = new ArrayList<>();
+            List<Transaction> transactions = new ArrayList<>();
+
             for (WebElement transaction : transactionElements) {
-                transactions.add(transaction.getText());
+                String text = transaction.getText().trim();
+                if (!text.isEmpty() && !text.matches("^(TIME|FROM|TO|VALUE|TOKEN|USD)$")) {
+                    Transaction parsedTransaction = parseTransaction(text);
+                    if (parsedTransaction != null) {
+                        transactions.add(parsedTransaction);
+                    }
+                }
             }
 
             walletData = new WalletData(balance, transactions);
         } catch (Exception e) {
-            logger.error("Ошибка при парсинге данных кошелька", e);
+            e.printStackTrace();
         } finally {
             driver.quit();
         }
         return walletData;
+    }
+
+    public WalletData processRawWalletData(RawWalletData rawWalletData) {
+        String balance = rawWalletData.getRawBalance();
+        List<Transaction> transactions = new ArrayList<>();
+
+        for (String rawTransaction : rawWalletData.getRawTransactions()) {
+            Transaction transaction = parseTransaction(rawTransaction.trim());
+            if (transaction != null) {
+                transactions.add(transaction);
+            }
+        }
+
+        return new WalletData(balance, transactions);
+    }
+
+
+    private Transaction parseTransaction(String rawTransaction) {
+        String[] parts = rawTransaction.split("\n");
+        if (parts.length == 6) {
+            String tokenName = extractTokenName(parts);
+            return new Transaction(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5], tokenName);
+        }
+        return null;
+    }
+
+    private String extractTokenName(String[] parts) {
+        return parts.length > 4 ? parts[4] : "Unknown";
     }
 }

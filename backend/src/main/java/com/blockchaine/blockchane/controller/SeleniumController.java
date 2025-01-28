@@ -1,5 +1,6 @@
 package com.blockchaine.blockchane.controller;
 
+import com.blockchaine.blockchane.dto.RawWalletData;
 import com.blockchaine.blockchane.dto.WalletData;
 import com.blockchaine.blockchane.service.SeleniumService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,7 @@ public class SeleniumController {
 
     @GetMapping("/wallet")
     public WalletData getWalletData(@RequestParam String address) {
+        // Метод parseWalletData уже возвращает WalletData
         return seleniumService.parseWalletData(address);
     }
 }

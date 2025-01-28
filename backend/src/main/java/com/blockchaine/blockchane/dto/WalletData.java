@@ -8,9 +8,9 @@ import java.util.List;
 public class WalletData {
 
     private String balance;
-    private List<String> transactionHistory;
+    private List<Transaction> transactionHistory;
 
-    public WalletData(String balance, List<String> transactionHistory) {
+    public WalletData(String balance, List<Transaction> transactionHistory) {
         this.balance = balance;
         this.transactionHistory = transactionHistory;
     }

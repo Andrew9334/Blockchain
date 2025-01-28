@@ -4,20 +4,21 @@ import lombok.Getter;
 
 @Getter
 public class Transaction {
-    private String date;
+    private String time;
     private String from;
     private String to;
     private String value;
     private String token;
     private String usd;
+    private String tokenName;
 
-    // Конструктор
-    public Transaction(String date, String from, String to, String value, String token, String usd) {
-        this.date = date;
+    public Transaction(String time, String from, String to, String value, String token, String usd, String tokenName) {
+        this.time = time;
         this.from = from;
         this.to = to;
         this.value = value;
         this.token = token;
         this.usd = usd;
+        this.tokenName = tokenName;
     }
 }
