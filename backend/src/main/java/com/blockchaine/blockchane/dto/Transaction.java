@@ -1,8 +1,14 @@
 package com.blockchaine.blockchane.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Transaction {
     private String time;
     private String from;
@@ -11,14 +17,4 @@ public class Transaction {
     private String token;
     private String usd;
     private String tokenName;
-
-    public Transaction(String time, String from, String to, String value, String token, String usd, String tokenName) {
-        this.time = time;
-        this.from = from;
-        this.to = to;
-        this.value = value;
-        this.token = token;
-        this.usd = usd;
-        this.tokenName = tokenName;
-    }
 }

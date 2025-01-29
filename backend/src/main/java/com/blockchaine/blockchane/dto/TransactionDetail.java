@@ -1,8 +1,10 @@
 package com.blockchaine.blockchane.dto;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class TransactionDetail {
     private final String signature;
     private final long slot;

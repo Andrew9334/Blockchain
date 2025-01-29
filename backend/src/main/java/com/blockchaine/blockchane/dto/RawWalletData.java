@@ -1,10 +1,12 @@
 package com.blockchaine.blockchane.dto;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 @Getter
+@Setter
 public class RawWalletData {
 
     private final String rawBalance;
